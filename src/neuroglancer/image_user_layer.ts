@@ -49,7 +49,7 @@ export class ImageUserLayer extends Base {
   blendMode = trackableBlendModeValue();
   fragmentMain = getTrackableFragmentMain();
   shaderError = makeWatchableShaderError();
-  color = new TrackableRGB(vec3.fromValues(1, 1, 1));;
+  color = new TrackableRGB(vec3.fromValues(1, 1, 1));
   useCustomShader = new TrackableBoolean(false);
   renderLayer: ImageRenderLayer;
   min = trackableAlphaValue(0.0);
@@ -95,7 +95,7 @@ void main() {
     this.fragmentMain.restoreState(specification[SHADER_JSON_KEY]);
     this.color.restoreState(specification[COLOR_JSON_KEY]);
     this.useCustomShader.restoreState(specification[USE_CUSTOM_SHADER_JSON_KEY]);
-    this.min.restoreState(specification[MAX_JSON_KEY]);
+    this.min.restoreState(specification[MIN_JSON_KEY]);
     this.max.restoreState(specification[MAX_JSON_KEY]);
     const {multiscaleSource} = this;
     if (multiscaleSource === undefined) {
@@ -128,8 +128,8 @@ void main() {
       x[SHADER_JSON_KEY] = this.fragmentMain.toJSON();
     } else {
       x[COLOR_JSON_KEY] = this.color.toJSON();
-      x[MIN_JSON_KEY] = this.min.toJSON;
-      x[MAX_JSON_KEY] = this.max.toJSON;
+      x[MIN_JSON_KEY] = this.min.toJSON();
+      x[MAX_JSON_KEY] = this.max.toJSON();
     }
     return x;
   }
