@@ -118,6 +118,8 @@ export class MultiscaleVolumeChunkSource implements GenericMultiscaleVolumeChunk
     let maxVoxelsPerChunkLog2 = verifyObjectProperty(
         response, 'maxVoxelsPerChunkLog2',
         x => x === undefined ? DEFAULT_MAX_VOXELS_PER_CHUNK_LOG2 : verifyPositiveInt(x));
+    let chunkSize = verifyObjectProperty(
+      response, 'chunkSize', x => parseFixedLengthArray(vec3.create(), x, verifyPositiveInt));
 
     /**
      * Scales used for arbitrary orientation (should be near isotropic).

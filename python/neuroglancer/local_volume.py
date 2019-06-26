@@ -58,7 +58,8 @@ class LocalVolume(trackable_state.ChangeNotifier):
                  downsampling='3d',
                  max_downsampling=downsample_scales.DEFAULT_MAX_DOWNSAMPLING,
                  max_downsampled_size=downsample_scales.DEFAULT_MAX_DOWNSAMPLED_SIZE,
-                 max_downsampling_scales=downsample_scales.DEFAULT_MAX_DOWNSAMPLING_SCALES):
+                 max_downsampling_scales=downsample_scales.DEFAULT_MAX_DOWNSAMPLING_SCALES,
+                 chunk_size=None):
         """Initializes a LocalVolume.
 
         @param data: 3-d [z, y, x] array or 4-d [channel, z, y, x] array.
@@ -88,6 +89,9 @@ class LocalVolume(trackable_state.ChangeNotifier):
 
                 - lock_boundary_vertices: bool.  Retain all vertices along mesh surface boundaries,
                   which can only occur at the boundary of the volume.  Defaults to true.
+
+        @param chunk_size: Tuple (x,y,z) representing size of data request client should use.
+            max_voxels_per_chunk_log2 will be ignored if both are specified.
         """
         super(LocalVolume, self).__init__()
         if hasattr(data, 'attrs'):
@@ -102,6 +106,7 @@ class LocalVolume(trackable_state.ChangeNotifier):
         self.max_voxels_per_chunk_log2 = max_voxels_per_chunk_log2
         self.data = data
         self.skeletons = skeletons
+        self.chunk_size = chunk_size
         if voxel_offset is not None:
             if offset is not None:
                 raise ValueError('Must specify at most one of \'offset\' and \'voxel_offset\'.')
@@ -178,7 +183,9 @@ class LocalVolume(trackable_state.ChangeNotifier):
                     numChannels=self.num_channels,
                     generation=self.change_count,
         )
-        if self.max_voxels_per_chunk_log2 is not None:
+        if self.chunk_size is not None:
+            info['chunkSize'] = self.chunk_size
+        elif self.max_voxels_per_chunk_log2 is not None:
             info['maxVoxelsPerChunkLog2'] = self.max_voxels_per_chunk_log2
 
         def get_scale_info(s):
